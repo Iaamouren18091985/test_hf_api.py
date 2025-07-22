@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Leer token desde Streamlit Secrets
-HF_TOKEN = st.secrets["HF_TOKEN"]
+HF_TOKEN = st.secrets["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"]
 
 st.set_page_config(page_title="Generador de Artículos SEO", page_icon="🧠")
 st.title("🧠 Generador de Artículos con Hugging Face")
@@ -18,7 +18,7 @@ if st.button("🚀 Generar artículo"):
     else:
         with st.spinner("Generando artículo..."):
             headers = {
-                "Authorization": f"Bearer {HF_TOKEN}"
+                "Authorization": f"Bearer {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}"
             }
 
             prompt = (
