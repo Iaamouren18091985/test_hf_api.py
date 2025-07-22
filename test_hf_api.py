@@ -19,7 +19,10 @@ if st.button("🚀 Generar artículo"):
     else:
         with st.spinner("Generando artículo..."):
             headers = {
-                "Authorization": f"Bearer {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}"
+                headers = {
+    "Authorization": f"Bearer {HF_TOKEN}"
+}
+
             }
 
             prompt = (
