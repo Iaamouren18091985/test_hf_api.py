@@ -2,7 +2,8 @@ import streamlit as st
 import requests
 
 # Leer token desde Streamlit Secrets
-HF_TOKEN = st.secrets["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"]
+_TOKEN = st.secrets["HF_TOKEN"]
+
 
 st.set_page_config(page_title="Generador de Artículos SEO", page_icon="🧠")
 st.title("🧠 Generador de Artículos con Hugging Face")
