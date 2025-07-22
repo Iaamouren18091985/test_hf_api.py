@@ -32,17 +32,16 @@ if st.button("🚀 Generar artículo"):
                 }
             }
 
-            url = "https://api-inference.huggingface.co/models/gpt2"
+           import requests
 
-            response = requests.post(url, headers=headers, json=payload)
+HF_TOKEN = "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"
 
-            if response.status_code == 200:
-                result = response.json()
-                if isinstance(result, list) and "generated_text" in result[0]:
-                    st.subheader("📄 Artículo generado:")
-                    st.write(result[0]["generated_text"])
-                else:
-                    st.error("El formato de respuesta no es el esperado.")
-            else:
-                st.error(f"Error {response.status_code}: No se pudo generar el artículo.")
+headers = {
+    "Authorization": f"Bearer {HF_TOKEN}"
+}
+
+response = requests.get("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", headers=headers)
+
+print(response.status_code)
+print(response.json())
 
