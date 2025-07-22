@@ -1,8 +1,8 @@
 import streamlit as st
 import requests
 
-# Tu token de Hugging Face — no lo compartas públicamente en producción
-HF_TOKEN = "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"
+# Leer token desde Streamlit Secrets
+HF_TOKEN = st.secrets["HF_TOKEN"]
 
 st.set_page_config(page_title="Generador de Artículos SEO", page_icon="🧠")
 st.title("🧠 Generador de Artículos con Hugging Face")
@@ -12,8 +12,9 @@ style = st.selectbox("✍️ Estilo del artículo", ["Informativo", "Persuasivo"
 length = st.slider("📏 Longitud del artículo (palabras)", 100, 1000, 300)
 
 if st.button("🚀 Generar artículo"):
+
     if not keyword.strip():
-        st.error("Por favor ingresa una palabra clave.")
+        st.error("Por favor, ingresa una palabra clave.")
     else:
         with st.spinner("Generando artículo..."):
             headers = {
@@ -21,27 +22,32 @@ if st.button("🚀 Generar artículo"):
             }
 
             prompt = (
-                f"Eres un redactor SEO experto. Escribe un artículo de aproximadamente {length} palabras, estilo {style}, "
-                f"usando la palabra clave principal: '{keyword}'. Usa subtítulos y lenguaje claro."
+                f"Eres un redactor SEO experto. Escribe un artículo de aproximadamente {length} palabras, "
+                f"estilo {style}, usando la palabra clave principal: '{keyword}'. Usa subtítulos y lenguaje claro."
             )
 
             payload = {
                 "inputs": prompt,
                 "parameters": {
-                    "max_new_tokens": length // 2  # Controla longitud, aunque no exacto
+                    "max_new_tokens": length,
+                    "do_sample": True,
+                    "temperature": 0.7
                 }
             }
 
-           import requests
+            url = "https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta"
 
-HF_TOKEN = "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"
+            response = requests.post(url, headers=headers, json=payload)
 
-headers = {
-    "Authorization": f"Bearer {HF_TOKEN}"
-}
-
-response = requests.get("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", headers=headers)
-
-print(response.status_code)
-print(response.json())
-
+            if response.status_code == 200:
+                result = response.json()
+                # El resultado puede ser una lista con 'generated_text'
+                if isinstance(result, list) and "generated_text" in result[0]:
+                    st.subheader("📄 Artículo generado:")
+                    st.write(result[0]["generated_text"])
+                else:
+                    st.error("El formato de respuesta no es el esperado.")
+            elif response.status_code == 401:
+                st.error("Error 401: Token inválido o sin permisos para llamar a la API.")
+            else:
+                st.error(f"Error {response.status_code}: No se pudo generar el artículo.")
